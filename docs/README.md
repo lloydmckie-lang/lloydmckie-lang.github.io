@@ -1,70 +1,46 @@
-# Lloyd McKie
-* Developer Notebook
+# Getting Started with Create React App
 
-## Training Champion
-* I provide resources, support and guidance for training and certification in Cloud.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-### Career
-1. [Mentoring](https://lloyd150337.substack.com/p/mentoring-more-than-just-a-title)
-1. [Speaking](https://lloyd150337.substack.com/p/level-up-your-career-the-critical)
-1. [Growth Behaviors](https://lloyd150337.substack.com/p/unlock-your-potential-embracing-the)
+## Available Scripts
 
-### AWS
-1. [SAA - Solution Architect Associate](https://deplloyd.hashnode.dev/solution-architect-associate-saa)
-1. [DVA - Developer Associate](https://deplloyd.hashnode.dev/aws-developer-associate)
+In the project directory, you can run:
 
-### Azure
-1. [Az-900](https://lloyd150337.substack.com/p/azure-fundamental-az-900)
+### `npm start`
 
-## Software Architecture
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-1. AWS WAF - [Well Architected Framework](https://lloyd150337.substack.com/p/well-architected-lens-cost-agentic)
-1. [AWS Scaling](https://lloyd150337.substack.com/p/the-scaling-spectrum-who-owns-your) 
-1. [Trajectories for Architects and Developers](https://lloyd150337.substack.com/p/trajectories-for-architects-and-developers)
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-## Security
+### `npm test`
 
-1. [Quantum Clock is ticking](https://lloyd150337.substack.com/p/the-quantum-clock-is-ticking)
-1. [RBAC and ABAC](https://lloyd150337.substack.com/p/from-role-bloat-to-resource-bliss)
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
+### `npm run build`
 
-## Software Development
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### AWS
-1. CDK
-    1. Networking VPC Flow logs [part 1](https://deplloyd.hashnode.dev/vpc-flow-logs-with-cdk-part-1), [part 2](https://deplloyd.hashnode.dev/vpc-flow-logs-with-cdk-part-2), [S3 Endpoints](https://deplloyd.hashnode.dev/aws-gateway-vpc-endpoint-s3-with-cdk), [Application Load balancers](https://deplloyd.hashnode.dev/aws-application-load-balancer-with-cdk)
-    1. [Builder pattern in AWS](https://deplloyd.hashnode.dev/the-builder-pattern-in-cdk)
-1. [Proofs to Programs - Mathematical roots of .NET LINQ](https://lloyd150337.substack.com/p/from-proofs-to-programs-the-deep)
-1. [Developers Prioritization Stack](https://lloyd150337.substack.com/p/beyond-the-backlog-the-developers)
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### Testing
+### `npm run eject`
 
-1. [Snapshot Testing](https://deplloyd.hashnode.dev/snapshot-testing-reactive-to-proactive)
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-### Packaging
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-1. [UV is replacing Pip](https://lloyd150337.substack.com/p/why-uv-is-replacing-pip-a-deep-dive)
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-### Site Reliability Engineering
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-1. [Site Reliability Engineering](https://deplloyd.hashnode.dev/site-reliability-engineering-sre)
+## Learn More
 
-### [Productive Developers](https://deplloyd.hashnode.dev/developers-hierarchy-of-needs)
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-## AI
-
-1. [Agentic AI in Field Service Management](https://lloyd150337.substack.com/p/how-agentic-ai-in-field-service-management)
-
-## Events
-
-1. [AWS CDK, Networking, Compliance](https://lloyd150337.substack.com/p/aws-cdk-aws-networking-and-compliance)
-1. [DDDPerth 2025](https://lloyd150337.substack.com/p/celebrating-an-incredible-dddperth)
-1. [GitHub Perth - Advanced Configuration](https://lloyd150337.substack.com/p/stop-fighting-git-advanced-configuration)
-1. [IIBA Perth Volunteer Awards](https://lloyd150337.substack.com/p/celebrating-foba-2025-insights-inspiration)
-1. [The Next Generation of Product Leaders](https://lloyd150337.substack.com/p/the-next-generation-product-leader)
-
-
-## Books
-
-1. [From No to How](https://lloyd150337.substack.com/p/from-no-to-how)
+To learn React, check out the [React documentation](https://reactjs.org/).
