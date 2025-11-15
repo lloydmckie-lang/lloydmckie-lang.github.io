@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Character Sheet - Tech Wizard Creator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-section, .preview-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-input label {
+            font-size: 0.9em;
+            margin-bottom: 6px;
+        }
+
+        .stat-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .stat-row input[type="number"] {
+            flex: 1;
+        }
+
+        .stat-row input[type="text"] {
+            flex: 2;
+            font-size: 0.85em;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-generate {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-generate:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-reset {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-reset:hover {
+            background: #d0d0d0;
+        }
+
+        .preview-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            position: sticky;
+            top: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .character-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .character-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .character-class {
+            font-size: 1.2em;
+            color: #764ba2;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .character-known-for {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .character-known-for strong {
+            color: #667eea;
+        }
+
+        .stats-display {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.95em;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-name {
+            font-weight: 600;
+            color: #333;
+            min-width: 100px;
+        }
+
+        .stat-value {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-score {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .stat-bonus {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .stat-description {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-section {
+                position: static;
+                max-height: none;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .bonus-display {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #856404;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚔️ D&D Character Sheet Creator</h1>
+
+        <div class="content">
+            <!-- Form Section -->
+            <div class="form-section">
+                <h2>Build Your Character</h2>
+                <form id="characterForm">
+                    <!-- Character Basics -->
+                    <div class="form-group">
+                        <label for="characterName">Character Name *</label>
+                        <input type="text" id="characterName" name="characterName" placeholder="e.g., Lloyd" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="characterRole">Role/Title *</label>
+                        <input type="text" id="characterRole" name="characterRole" placeholder="e.g., Tech Wizard, Cloud Architect" required>
+                    </div>
+
+                    <!-- Known For / Specialties -->
+                    <div class="form-group">
+                        <label>Things You're Known For</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knownAWS" name="known" value="AWS">
+                                <label for="knownAWS">AWS</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knownAzure" name="known" value="Azure">
+                                <label for="knownAzure">Azure</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knownDevOps" name="known" value="DevOps">
+                                <label for="knownDevOps">DevOps</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knownAI" name="known" value="AI">
+                                <label for="knownAI">AI</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knownProgramming" name="known" value="Programming">
+                                <label for="knownProgramming">Programming</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="knownOther">Other Specialties (comma-separated)</label>
+                        <input type="text" id="knownOther" name="knownOther" placeholder="e.g., Architecture, Security, Leadership">
+                    </div>
+
+                    <!-- D&D Stats -->
+                    <h2 style="margin-top: 30px;">Character Stats</h2>
+
+                    <div class="stats-grid">
+                        <!-- Strength -->
+                        <div class="stat-input">
+                            <label for="strScore">Strength (STR)</label>
+                            <div class="stat-row">
+                                <input type="number" id="strScore" name="strScore" value="10" min="1" max="20">
+                                <input type="text" id="strDesc" name="strDesc" placeholder="Role/Description" value="Physical strength">
+                            </div>
+                        </div>
+
+                        <!-- Dexterity -->
+                        <div class="stat-input">
+                            <label for="dexScore">Dexterity (DEX)</label>
+                            <div class="stat-row">
+                                <input type="number" id="dexScore" name="dexScore" value="10" min="1" max="20">
+                                <input type="text" id="dexDesc" name="dexDesc" placeholder="Role/Description" value="Hand-eye coordination">
+                            </div>
+                        </div>
+
+                        <!-- Constitution -->
+                        <div class="stat-input">
+                            <label for="conScore">Constitution (CON)</label>
+                            <div class="stat-row">
+                                <input type="number" id="conScore" name="conScore" value="10" min="1" max="20">
+                                <input type="text" id="conDesc" name="conDesc" placeholder="Role/Description" value="Endurance">
+                            </div>
+                        </div>
+
+                        <!-- Intelligence -->
+                        <div class="stat-input">
+                            <label for="intScore">Intelligence (INT)</label>
+                            <div class="stat-row">
+                                <input type="number" id="intScore" name="intScore" value="10" min="1" max="20">
+                                <input type="text" id="intDesc" name="intDesc" placeholder="Role/Description" value="Reasoning power">
+                            </div>
+                        </div>
+
+                        <!-- Wisdom -->
+                        <div class="stat-input">
+                            <label for="wisScore">Wisdom (WIS)</label>
+                            <div class="stat-row">
+                                <input type="number" id="wisScore" name="wisScore" value="10" min="1" max="20">
+                                <input type="text" id="wisDesc" name="wisDesc" placeholder="Role/Description" value="Awareness">
+                            </div>
+                        </div>
+
+                        <!-- Charisma -->
+                        <div class="stat-input">
+                            <label for="chaScore">Charisma (CHA)</label>
+                            <div class="stat-row">
+                                <input type="number" id="chaScore" name="chaScore" value="10" min="1" max="20">
+                                <input type="text" id="chaDesc" name="chaDesc" placeholder="Role/Description" value="Force of personality">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bonus Section -->
+                    <div class="form-group">
+                        <label for="bonusValue">Mastery Bonus</label>
+                        <input type="number" id="bonusValue" name="bonusValue" value="0" min="0" max="10" placeholder="Bonus to rolls (e.g., +2)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bonusDescription">Bonus Applied To (e.g., Cloud, Programming, DevOps, AI)</label>
+                        <input type="text" id="bonusDescription" name="bonusDescription" placeholder="List bonuses by specialty">
+                    </div>
+
+                    <!-- Character Description -->
+                    <div class="form-group">
+                        <label for="characterDesc">Character Description</label>
+                        <textarea id="characterDesc" name="characterDesc" placeholder="Describe your character's abilities and journey..."></textarea>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="button-group">
+                        <button type="button" class="btn-generate" onclick="generateCharacter()">Generate Character</button>
+                        <button type="reset" class="btn-reset">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <h2>Character Preview</h2>
+                <div id="preview">
+                    <div class="empty-state">
+                        <p>📜 Fill out the form and click "Generate Character" to see your D&D character sheet!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set default values from Lloyd's example
+        function setDefaultLloyd() {
+            document.getElementById('characterName').value = 'Lloyd';
+            document.getElementById('characterRole').value = 'Tech Wizard';
+            document.getElementById('knownAWS').checked = true;
+            document.getElementById('knownAzure').checked = true;
+            document.getElementById('knownProgramming').checked = true;
+            document.getElementById('knownDevOps').checked = true;
+            document.getElementById('knownAI').checked = true;
+            document.getElementById('strScore').value = 8;
+            document.getElementById('strDesc').value = 'Meager strength';
+            document.getElementById('dexScore').value = 13;
+            document.getElementById('dexDesc').value = 'Steady hand';
+            document.getElementById('conScore').value = 14;
+            document.getElementById('conDesc').value = 'Endure late-night sessions';
+            document.getElementById('intScore').value = 15;
+            document.getElementById('intDesc').value = 'Arcane coding';
+            document.getElementById('wisScore').value = 12;
+            document.getElementById('wisDesc').value = 'Engineering wisdom';
+            document.getElementById('chaScore').value = 14;
+            document.getElementById('chaDesc').value = 'Sway councils of architects';
+            document.getElementById('bonusValue').value = 2;
+            document.getElementById('bonusDescription').value = 'Cloud, Programming, DevOps, AI';
+            document.getElementById('characterDesc').value = 'Whose impressive Intelligence for arcane coding and solid Constitution to endure late-night sessions far outweigh his meager Strength. With a steady hand and engineering Wisdom, he ensures no quest is too big, from swaying a council of architects to pair programming across the globe.';
+        }
+
+        // Calculate modifier from stat score
+        function getModifier(score) {
+            return Math.floor((score - 10) / 2);
+        }
+
+        // Generate and display character
+        function generateCharacter() {
+            const form = document.getElementById('characterForm');
+            const name = document.getElementById('characterName').value;
+            const role = document.getElementById('characterRole').value;
+
+            if (!name || !role) {
+                alert('Please fill in Character Name and Role');
+                return;
+            }
+
+            // Get known for
+            const knownCheckboxes = document.querySelectorAll('input[name="known"]:checked');
+            const known = Array.from(knownCheckboxes).map(cb => cb.value);
+            const knownOther = document.getElementById('knownOther').value;
+            const allKnown = [...known, ...knownOther.split(',').map(s => s.trim()).filter(s => s)];
+
+            // Get stats
+            const stats = {
+                'Strength': { score: parseInt(document.getElementById('strScore').value), desc: document.getElementById('strDesc').value },
+                'Dexterity': { score: parseInt(document.getElementById('dexScore').value), desc: document.getElementById('dexDesc').value },
+                'Constitution': { score: parseInt(document.getElementById('conScore').value), desc: document.getElementById('conDesc').value },
+                'Intelligence': { score: parseInt(document.getElementById('intScore').value), desc: document.getElementById('intDesc').value },
+                'Wisdom': { score: parseInt(document.getElementById('wisScore').value), desc: document.getElementById('wisDesc').value },
+                'Charisma': { score: parseInt(document.getElementById('chaScore').value), desc: document.getElementById('chaDesc').value }
+            };
+
+            const bonus = parseInt(document.getElementById('bonusValue').value) || 0;
+            const bonusDesc = document.getElementById('bonusDescription').value;
+            const characterDesc = document.getElementById('characterDesc').value;
+
+            // Build HTML preview
+            let html = `<div class="character-card">
+                <div class="character-name">${name}</div>
+                <div class="character-class">${role}</div>`;
+
+            if (allKnown.length > 0) {
+                html += `<div class="character-known-for"><strong>Known For:</strong> ${allKnown.join(', ')}</div>`;
+            }
+
+            html += '<div class="stats-display">';
+            for (const [statName, statData] of Object.entries(stats)) {
+                const mod = getModifier(statData.score);
+                const modStr = mod >= 0 ? `+${mod}` : `${mod}`;
+                const shortName = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma']
+                    .map((s, i) => s.match(/[A-Z]/)[0])[['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'].indexOf(statName)];
+                
+                html += `<div class="stat-item">
+                    <span class="stat-name">${statName} (${shortName})</span>
+                    <span class="stat-value">
+                        <span class="stat-score">${statData.score}</span>
+                        <span class="stat-bonus">${modStr}</span>
+                    </span>
+                </div>
+                <div style="font-size: 0.8em; color: #999; padding-left: 0; margin-bottom: 5px;">${statData.desc}</div>`;
+            }
+            html += '</div>';
+
+            if (bonus > 0) {
+                html += `<div class="bonus-display">🎯 Mastery Bonus: +${bonus} to rolls (${bonusDesc})</div>`;
+            }
+
+            if (characterDesc) {
+                html += `<div class="stat-description">${characterDesc}</div>`;
+            }
+
+            html += '</div>';
+
+            document.getElementById('preview').innerHTML = html;
+        }
+
+        // Initialize with Lloyd's example on page load
+        window.addEventListener('load', function() {
+            setDefaultLloyd();
+            generateCharacter();
+        });
+    </script>
+</body>
+</html>
