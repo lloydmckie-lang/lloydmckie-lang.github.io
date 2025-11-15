@@ -4,6 +4,11 @@
 ## Training Champion
 * I provide resources, support and guidance for training and certification in Cloud.
 
+### Career
+1. [Mentoring](https://lloyd150337.substack.com/p/mentoring-more-than-just-a-title)
+1. [Speaking](https://lloyd150337.substack.com/p/level-up-your-career-the-critical)
+1. [Growth Behaviors](https://lloyd150337.substack.com/p/unlock-your-potential-embracing-the)
+
 ### AWS
 1. [SAA - Solution Architect Associate](https://deplloyd.hashnode.dev/solution-architect-associate-saa)
 1. [DVA - Developer Associate](https://deplloyd.hashnode.dev/aws-developer-associate)
@@ -15,6 +20,7 @@
 
 1. AWS WAF - [Well Architected Framework](https://lloyd150337.substack.com/p/well-architected-lens-cost-agentic)
 1. [AWS Scaling](https://lloyd150337.substack.com/p/the-scaling-spectrum-who-owns-your) 
+1. [Trajectories for Architects and Developers](https://lloyd150337.substack.com/p/trajectories-for-architects-and-developers)
 
 ## Security
 
@@ -45,6 +51,10 @@
 1. [Site Reliability Engineering](https://deplloyd.hashnode.dev/site-reliability-engineering-sre)
 
 ### [Productive Developers](https://deplloyd.hashnode.dev/developers-hierarchy-of-needs)
+
+## AI
+
+1. [Agentic AI in Field Service Management](https://lloyd150337.substack.com/p/how-agentic-ai-in-field-service-management)
 
 ## Events
 
