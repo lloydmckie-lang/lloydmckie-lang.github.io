@@ -15,6 +15,7 @@
 
 ### Azure
 1. [Az-900](https://lloyd150337.substack.com/p/azure-fundamental-az-900)
+1. [Ai-900](https://lloyd150337.substack.com/p/azure-ai-fundamentals-ai-900-study)
 
 ## Software Architecture
 
