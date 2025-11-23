@@ -78,3 +78,7 @@
 ## Tools
 
 1. [GitHub Maturity Assessment](tools/github-maturity-assessment.html)
+2. [Beyond the Backlog](tools/beyond-the-backlog.html)
+3. [Beyond the Backlog - Action Priority Matrix](tools/beyond-the-backlog.action-priority-matrix.html)
+4. [From Code to Concept - Why Developers struggle](tools/from-code-to-concept-why-developers-struggle.html)
+5. [Technical Storytelling - Explode details as needed](tools/technical-storytelling-explode-detail-as-needed.html)
