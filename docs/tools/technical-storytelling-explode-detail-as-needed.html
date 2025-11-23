@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Technical Storyteller: Explode Detail as Needed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+        }
+        .gradient-bg {
+            background: linear-gradient(90deg, #1e40af 0%, #1d4ed8 100%); /* Blue 700 to Blue 800 */
+        }
+        .card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Hero Section -->
+    <header class="gradient-bg text-white py-16 md:py-24">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <p class="text-indigo-200 font-semibold mb-3 tracking-wider uppercase text-sm">Architecture & Communication</p>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight">
+                The Technical Storyteller: Why You Must Explode Detail Out
+            </h1>
+            <p class="text-xl text-indigo-200 mt-6 max-w-2xl mx-auto">
+                Stop burying your best knowledge. Learn to start with the high-level duck and progressively disclose the fascinating details using tools like C4.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        
+        <!-- Section 1: Progressive Disclosure (The Duck & C4) -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-indigo-500 pb-2">
+                How Do You Tell a Story That Matters? Start at the Top.
+            </h2>
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div class="text-gray-700 space-y-4 text-lg">
+                    <p>In the complex world of modern IT, information is everywhere, yet true understanding is scarce. The most effective technical narratives, whether they're system designs or documentation, begin with a simple, high-level view—the **nice high level picture of a duck**.</p>
+                    <p>The details are fascinating, but if you start there, you limit what your audience can see. This is the core principle of **Progressive Disclosure** and the brilliance of the **C4 Model** (Context, Containers, Components, Code). You only explode the detail out when the audience signals they need to zoom in.</p>
+                    <p>Tools that allow a high level and then enable links or zoom into a low level, like **Mural**, do a great job of this. They prioritize the **user's cognitive journey**.</p>
+                </div>
+
+                <!-- Infographic/Diagram Concept -->
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 flex justify-center items-center">
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="w-24 h-24 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-2xl shadow-xl">
+                            DUCK
+                        </div>
+                        <p class="text-xl font-semibold text-gray-800">The High-Level View</p>
+                        
+                        <!-- C4 Zoom Path -->
+                        <div class="flex flex-col items-center space-y-2 pt-4">
+                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <span class="text-sm font-medium text-indigo-600">Context (C1)</span>
+                            <span class="text-sm font-medium text-indigo-600">Containers (C2)</span>
+                            <span class="text-sm font-medium text-indigo-600">Components (C3)</span>
+                            <span class="text-sm font-medium text-indigo-600">Code (C4)</span>
+                        </div>
+                        <p class="text-base text-gray-500 italic mt-2">Explode Detail Out as Needed</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Knowledge Graveyard vs. Knowledge Exchange -->
+        <div class="grid md:grid-cols-2 gap-10 mb-16">
+            <!-- The Knowledge Graveyard -->
+            <div class="card bg-red-50 p-6 rounded-xl border-t-4 border-red-500">
+                <h3 class="text-2xl font-bold text-red-700 mb-4 flex items-center">
+                    <!-- Icon for Bad Tools (Tombstone) -->
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                    The Knowledge Graveyard (Slack)
+                </h3>
+                <div class="text-gray-700 space-y-3">
+                    <p>Tools like **Slack** do a bad job of storytelling. They become a **burial ground of Frequently Asked Questions**.</p>
+                    <p>This is the **SEO anti-pattern "Bury the lead"** in real-time. Anything you post or answer quickly gets buried by the chronological feed. Extending Slack with Knowledge Management is often **putting lipstick on a pig**—it doesn't solve the core information retrieval problem.</p>
+                    <p>Ask yourself: **Is the status quo working?** In an **IBM Garage Discovery** phase, we often find the data shows SMEs are asked the same questions repeatedly, leading to burnout and siloing.</p>
+                </div>
+            </div>
+
+            <!-- The Knowledge Exchange -->
+            <div class="card bg-green-50 p-6 rounded-xl border-t-4 border-green-500">
+                <h3 class="text-2xl font-bold text-green-700 mb-4 flex items-center">
+                    <!-- Icon for Good Solutions (Trophy) -->
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.01 12.01 0 002.944 12c0 2.871.722 5.56 1.944 7.916a11.955 11.955 0 018.618 3.04 12.01 12.01 0 008.618-3.04 11.955 11.955 0 011.944-7.916A12.01 12.01 0 0021.056 12z"></path></svg>
+                    The Knowledge Exchange (Stack Exchange)
+                </h3>
+                <div class="text-gray-700 space-y-3">
+                    <p>Platforms like **Stack Exchange** solve Q&A by **gamifying information retrieval**.</p>
+                    <p>Good questions and answers are rewarded with upvotes and reputation, ensuring **rank ordering** and quality control. Bad content is de-ranked. Tags allow you to classify information and find experts, ensuring you don't waste an **SME's** time with repeated questions.</p>
+                    <p>The system even rewards **"Necromancers"** for reviving dead questions with useful, modern answers. This creates a lasting, searchable knowledge artifact, not an ephemeral chat log.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Guiding Star and Expertise -->
+        <section class="mb-16 bg-white p-8 rounded-xl card border-l-4 border-blue-500">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">
+                The Guiding Star: What Problem Are You Solving?
+            </h2>
+            <div class="text-gray-700 space-y-4 text-lg">
+                <p>There's a common question in IT for a reason: **Instead of telling me exactly what you're trying to build, tell me what problems you're trying to solve.** This problem becomes the guiding star for everything that follows.</p>
+                <p>When you tell your story, lead with the problem. This establishes the context and allows your audience to filter the details. Only then do you introduce the solution—the technical details that "explode out."</p>
+                
+                <h3 class="text-2xl font-semibold text-gray-800 pt-4">Expertise is Practice, Not Paper</h3>
+                <p>Finally, real expertise isn't established by certifications alone. What truly validates expertise is **weekly practice**, like an **Architecture Kata** or **Development Kata**. What we practice weekly, we get better at. We become better storytellers when we practice structuring and presenting our technical narratives with clarity and progressive disclosure.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <p class="text-sm text-gray-400">© 2025 Technical Storytelling | Concepts based on Communications Thinking, IBM Garage Discovery, and Information Theory.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
