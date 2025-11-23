@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Maturity Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { font-family: 'Inter', sans-serif; }
+        /* Custom styles for better readability and structure */
+        .status-badge {
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .text-input {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #374151;
+            background-color: #1f2937;
+            color: #f9fafb;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .text-input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        }
+        .radio-label {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background-color: #374151;
+            color: #d1d5db;
+            transition: background-color 0.2s;
+        }
+        input[type="radio"]:checked + .radio-label {
+            background-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-blue-400 mb-2">GitHub Maturity Scanner</h1>
+            <p class="text-gray-400">Assess repository health, governance, and automation standards.</p>
+        </header>
+
+        <!-- Configuration Panel -->
+        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-white">Configuration</h2>
+            
+            <!-- GitHub PAT Input -->
+            <div class="mb-6">
+                <label for="pat" class="block text-sm font-medium text-gray-300 mb-2">GitHub Personal Access Token (PAT)</label>
+                <input type="password" id="pat" placeholder="Enter PAT with 'repo' and 'read:org' scopes" class="text-input" value="">
+                <p class="text-xs text-red-400 mt-1">Note: The PAT is required to avoid strict rate limits and access organizational data.</p>
+            </div>
+
+            <!-- Scan Type Selector -->
+            <div class="mb-6">
+                <span class="block text-sm font-medium text-gray-300 mb-2">Scan Type</span>
+                <div class="flex space-x-4">
+                    <input type="radio" id="single-repo" name="scan-type" value="single" class="hidden" checked>
+                    <label for="single-repo" class="radio-label flex-1 text-center">Single Repository</label>
+                    
+                    <input type="radio" id="organization" name="scan-type" value="org" class="hidden">
+                    <label for="organization" class="radio-label flex-1 text-center">Organization (Paginated)</label>
+                </div>
+            </div>
+
+            <!-- Target Inputs -->
+            <div id="single-inputs" class="space-y-4">
+                <div class="flex space-x-4">
+                    <div class="flex-1">
+                        <label for="repo-owner" class="block text-sm font-medium text-gray-300 mb-2">Owner / Organization</label>
+                        <input type="text" id="repo-owner" placeholder="e.g., google" class="text-input" value="google">
+                    </div>
+                    <div class="flex-1">
+                        <label for="repo-name" class="block text-sm font-medium text-gray-300 mb-2">Repository Name</label>
+                        <input type="text" id="repo-name" placeholder="e.g., gemini-api-cookbook" class="text-input" value="gemini-api-cookbook">
+                    </div>
+                </div>
+            </div>
+
+            <div id="org-inputs" class="space-y-4 hidden">
+                <div>
+                    <label for="org-name" class="block text-sm font-medium text-gray-300 mb-2">Organization Name</label>
+                    <input type="text" id="org-name" placeholder="e.g., microsoft" class="text-input" value="microsoft">
+                </div>
+                <div class="text-sm text-yellow-400 p-3 bg-gray-700 rounded-lg">
+                    <p>Organization scan will fetch repositories in batches of 10 for processing.</p>
+                </div>
+            </div>
+
+            <!-- Run Button -->
+            <button id="run-scan-btn" class="mt-6 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition duration-200 shadow-md">
+                Run Assessment
+            </button>
+        </div>
+
+        <!-- Loading and Messages -->
+        <div id="message-area" class="text-center py-4 rounded-xl mb-6 hidden"></div>
+
+        <!-- Results Display -->
+        <div id="results-container" class="hidden">
+            <h2 class="text-2xl font-semibold mb-4 text-white">Scan Results</h2>
+            <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-2xl p-4">
+                <table id="results-table" class="min-w-full divide-y divide-gray-700">
+                    <thead class="bg-gray-700">
+                        <tr id="table-header">
+                            <!-- Header will be generated by JS -->
+                        </tr>
+                    </thead>
+                    <tbody id="results-body" class="divide-y divide-gray-800">
+                        <!-- Results rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const GH_BASE_URL = 'https://api.github.com';
+        const MAX_RETRIES = 5;
+        const REPO_BATCH_SIZE = 10;
+
+        // --- DOM Elements ---
+        const patInput = document.getElementById('pat');
+        const ownerInput = document.getElementById('repo-owner');
+        const repoInput = document.getElementById('repo-name');
+        const orgInput = document.getElementById('org-name');
+        const singleInputs = document.getElementById('single-inputs');
+        const orgInputs = document.getElementById('org-inputs');
+        const runScanBtn = document.getElementById('run-scan-btn');
+        const messageArea = document.getElementById('message-area');
+        const resultsContainer = document.getElementById('results-container');
+        const resultsBody = document.getElementById('results-body');
+        const tableHeader = document.getElementById('table-header');
+        
+        // --- Core File Checks (Phase 2) ---
+        const FILE_CHECKS = [
+            { key: 'hasLicense', path: 'LICENSE', label: 'LICENSE' },
+            { key: 'hasCodeOfConduct', path: '.github/CODE_OF_CONDUCT.md', label: 'CoC' },
+            { key: 'hasContributing', path: 'CONTRIBUTING.md', label: 'CONTRIBUTING' },
+            { key: 'hasReadme', path: 'README.md', label: 'README' },
+            { key: 'hasSecurity', path: '.github/SECURITY.md', label: 'SECURITY' },
+            { key: 'hasGitignore', path: '.gitignore', label: '.gitignore' },
+            { key: 'hasPRTemplate', path: '.github/pull_request_template.md', label: 'PR Template' },
+            { key: 'hasIssueTemplate', path: '.github/issue_template.md', label: 'Issue Template' },
+            { key: 'hasWorkflows', path: '.github/workflows', label: 'Workflows' },
+            { key: 'hasScripts', path: '.github/scripts', label: 'Scripts' },
+        ];
+
+        // --- Utility Functions ---
+
+        /**
+         * Generic fetch wrapper with exponential backoff and rate limit handling.
+         */
+        async function fetchWithBackoff(url, options = {}, retries = 0) {
+            const token = patInput.value;
+            const headers = { 
+                ...options.headers, 
+                'Accept': 'application/vnd.github.v3+json'
+            };
+
+            if (token) {
+                headers['Authorization'] = `token ${token}`;
+            }
+
+            try {
+                const response = await fetch(url, { ...options, headers });
+                
+                if (response.status === 403 && response.headers.get('X-RateLimit-Remaining') === '0') {
+                    const resetTime = parseInt(response.headers.get('X-RateLimit-Reset')) * 1000;
+                    const delay = resetTime - Date.now() + 1000;
+                    
+                    if (delay > 0) {
+                        displayMessage(`Rate limit hit. Retrying in ${Math.ceil(delay / 1000)}s...`, 'bg-yellow-600');
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return fetchWithBackoff(url, options, retries);
+                    }
+                }
+
+                if (!response.ok) {
+                    const errorBody = await response.json().catch(() => ({}));
+                    throw new Error(`HTTP Error ${response.status}: ${errorBody.message || response.statusText}`);
+                }
+
+                return response;
+
+            } catch (error) {
+                if (retries < MAX_RETRIES) {
+                    const delay = Math.pow(2, retries) * 1000 + (Math.random() * 1000); // 1s, 2s, 4s, ...
+                    displayMessage(`Request failed (${error.message}). Retrying in ${Math.round(delay/1000)}s...`, 'bg-red-600');
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchWithBackoff(url, options, retries + 1);
+                }
+                throw error;
+            }
+        }
+
+        /**
+         * Checks if a file or directory path exists within the Git Tree.
+         */
+        function checkFileExistence(tree, targetPath) {
+            // Normalize path to match Git Tree format (no leading slash)
+            const normalizedPath = targetPath.startsWith('/') ? targetPath.substring(1) : targetPath;
+
+            // Handle variations for common files (case-insensitive and extensions)
+            const baseName = normalizedPath.split('/').pop().split('.')[0].toUpperCase();
+            
+            for (const item of tree) {
+                // Exact match (good for specific paths like .github/workflows)
+                if (item.path === normalizedPath) {
+                    return true;
+                }
+                
+                // Flexible match for top-level documents (LICENSE, README, etc.)
+                if (normalizedPath.split('/').length === 1) {
+                    const itemBaseName = item.path.split('/').pop().split('.')[0].toUpperCase();
+                    if (itemBaseName === baseName) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function displayMessage(message, className = 'bg-blue-600') {
+            messageArea.innerHTML = message;
+            messageArea.className = `${className} text-white p-4 rounded-xl mb-6`;
+            messageArea.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            messageArea.classList.add('hidden');
+        }
+        
+        function setUILoading(isLoading) {
+            runScanBtn.disabled = isLoading;
+            runScanBtn.classList.toggle('opacity-50', isLoading);
+            runScanBtn.innerHTML = isLoading ? 
+                '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Running Scan...' : 
+                'Run Assessment';
+        }
+
+        // --- Main Logic Functions ---
+
+        /**
+         * Scans a single repository for all metrics and file checks.
+         */
+        async function getRepoDetails(owner, repo) {
+            const repoUrl = `${GH_BASE_URL}/repos/${owner}/${repo}`;
+            
+            // 1. Fetch Repository Details (Phase 1 Metrics)
+            const repoResponse = await fetchWithBackoff(repoUrl);
+            const repoData = await repoResponse.json();
+
+            if (repoData.private) {
+                displayMessage(`Skipping private repository: ${owner}/${repo}`, 'bg-yellow-600');
+                return null;
+            }
+
+            // 2. Fetch Git Tree for File Checks (Phase 2 Metrics)
+            // Get the default branch's tree (recursive)
+            const treeUrl = `${GH_BASE_URL}/repos/${owner}/${repo}/git/trees/${repoData.default_branch}?recursive=1`;
+            const treeResponse = await fetchWithBackoff(treeUrl);
+            const treeData = await treeResponse.json();
+            const tree = treeData.tree || [];
+
+            // 3. Compile Results
+            const result = {
+                name: repoData.full_name,
+                url: repoData.html_url,
+                // Phase 1 Metrics
+                stars: repoData.stargazers_count,
+                forks: repoData.forks_count,
+                openIssues: repoData.open_issues_count,
+                hasWiki: repoData.has_wiki,
+                hasProjects: repoData.has_projects,
+            };
+
+            // Phase 2 Metrics (File/Folder Presence)
+            FILE_CHECKS.forEach(check => {
+                result[check.key] = checkFileExistence(tree, check.path);
+            });
+            
+            // Special check for .github folder (since the other checks imply its existence, but we explicitly need it)
+            result['hasGithubDir'] = tree.some(item => item.path === '.github' && item.type === 'tree');
+            
+            // Overwrite hasWorkflows: requires the folder AND files inside
+            if (result.hasWorkflows) {
+                 result.hasWorkflows = tree.some(item => 
+                    item.path.startsWith('.github/workflows/') && item.type === 'blob'
+                );
+            }
+
+            return result;
+        }
+
+        /**
+         * Handles the single repository scan mode.
+         */
+        async function scanSingleRepo() {
+            const owner = ownerInput.value.trim();
+            const repo = repoInput.value.trim();
+
+            if (!owner || !repo) {
+                displayMessage('Please enter both the Owner/Organization and Repository Name.', 'bg-red-600');
+                return [];
+            }
+            
+            displayMessage(`Scanning single repository: ${owner}/${repo}...`, 'bg-blue-600');
+
+            try {
+                const result = await getRepoDetails(owner, repo);
+                displayMessage(`Scan complete for ${owner}/${repo}.`, 'bg-green-600');
+                return result ? [result] : [];
+            } catch (error) {
+                displayMessage(`Scan failed: ${error.message}`, 'bg-red-600');
+                console.error("Scan Error:", error);
+                return [];
+            }
+        }
+
+        /**
+         * Handles the organization scan mode with pagination.
+         */
+        async function scanOrganization() {
+            const org = orgInput.value.trim();
+            if (!org) {
+                displayMessage('Please enter the Organization Name.', 'bg-red-600');
+                return [];
+            }
+
+            const allResults = [];
+            let page = 1;
+            let repoCount = 0;
+            let continuePaging = true;
+
+            while (continuePaging) {
+                const orgReposUrl = `${GH_BASE_URL}/orgs/${org}/repos?type=all&per_page=${REPO_BATCH_SIZE}&page=${page}`;
+                displayMessage(`Fetching page ${page} of repos from ${org}... (Total processed: ${repoCount})`, 'bg-blue-600');
+                
+                try {
+                    const response = await fetchWithBackoff(orgReposUrl);
+                    const repos = await response.json();
+
+                    if (repos.length === 0) {
+                        continuePaging = false;
+                        break;
+                    }
+
+                    const batchPromises = repos.map(r => getRepoDetails(org, r.name));
+                    const batchResults = await Promise.all(batchPromises);
+
+                    // Filter out null results (e.g., private repos skipped)
+                    allResults.push(...batchResults.filter(r => r !== null));
+                    
+                    repoCount += repos.length;
+                    page++;
+
+                    if (repos.length < REPO_BATCH_SIZE) {
+                        continuePaging = false;
+                    }
+                } catch (error) {
+                    displayMessage(`Organization scan failed on page ${page}: ${error.message}`, 'bg-red-600');
+                    console.error("Org Scan Error:", error);
+                    continuePaging = false; // Stop on error
+                }
+            }
+
+            if (allResults.length > 0) {
+                displayMessage(`Organization scan complete. Processed ${repoCount} repositories.`, 'bg-green-600');
+            } else if (repoCount > 0) {
+                displayMessage(`Scan finished, but no public repositories found or all were skipped.`, 'bg-yellow-600');
+            }
+            
+            return allResults;
+        }
+
+        // --- Rendering Functions ---
+
+        /**
+         * Renders a success/failure badge.
+         */
+        function renderBadge(isSuccess) {
+            if (isSuccess) {
+                return `<span class="status-badge bg-green-500/20 text-green-400 border border-green-500">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            YES
+                        </span>`;
+            } else {
+                return `<span class="status-badge bg-red-500/20 text-red-400 border border-red-500">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                            NO
+                        </span>`;
+            }
+        }
+
+        /**
+         * Renders the complete results table.
+         */
+        function renderResults(results) {
+            resultsBody.innerHTML = '';
+            
+            if (results.length === 0) {
+                resultsContainer.classList.add('hidden');
+                return;
+            }
+
+            resultsContainer.classList.remove('hidden');
+
+            // 1. Generate Header Row
+            const headerCells = [
+                'Repository', 
+                '⭐ Stars', 
+                '🍴 Forks', 
+                '🐛 Open Issues', 
+                'Wiki', 
+                'Projects', 
+                '.github',
+                ...FILE_CHECKS.map(c => c.label)
+            ];
+            tableHeader.innerHTML = headerCells.map(h => `<th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider whitespace-nowrap">${h}</th>`).join('');
+
+            // 2. Generate Body Rows
+            results.forEach(repo => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-700/50 transition duration-150';
+
+                // Repository Name (Link)
+                row.innerHTML += `<td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-blue-400"><a href="${repo.url}" target="_blank" class="hover:underline">${repo.name}</a></td>`;
+                
+                // Phase 1 Metrics (Numeric)
+                row.innerHTML += `<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-300">${repo.stars}</td>`;
+                row.innerHTML += `<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-300">${repo.forks}</td>`;
+                row.innerHTML += `<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-300">${repo.openIssues}</td>`;
+
+                // Phase 1 Metrics (Boolean)
+                row.innerHTML += `<td class="px-4 py-3 whitespace-nowrap">${renderBadge(repo.hasWiki)}</td>`;
+                row.innerHTML += `<td class="px-4 py-3 whitespace-nowrap">${renderBadge(repo.hasProjects)}</td>`;
+                
+                // .github Directory
+                row.innerHTML += `<td class="px-4 py-3 whitespace-nowrap">${renderBadge(repo.hasGithubDir)}</td>`;
+                
+                // Phase 2 Metrics (File/Folder Presence)
+                FILE_CHECKS.forEach(check => {
+                    row.innerHTML += `<td class="px-4 py-3 whitespace-nowrap">${renderBadge(repo[check.key])}</td>`;
+                });
+
+                resultsBody.appendChild(row);
+            });
+        }
+
+
+        // --- Event Handlers & Initialization ---
+        
+        // Toggle input fields based on scan type
+        document.querySelectorAll('input[name="scan-type"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'single') {
+                    singleInputs.classList.remove('hidden');
+                    orgInputs.classList.add('hidden');
+                } else {
+                    singleInputs.classList.add('hidden');
+                    orgInputs.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Main orchestrator function
+        async function runAssessment() {
+            hideMessage();
+            resultsBody.innerHTML = '';
+            resultsContainer.classList.add('hidden');
+            
+            const scanType = document.querySelector('input[name="scan-type"]:checked').value;
+            let results = [];
+
+            setUILoading(true);
+            try {
+                if (scanType === 'single') {
+                    results = await scanSingleRepo();
+                } else {
+                    results = await scanOrganization();
+                }
+
+                renderResults(results);
+
+            } catch (error) {
+                // Final catch for unhandled errors
+                displayMessage(`An unexpected error occurred: ${error.message}`, 'bg-red-600');
+                console.error("Fatal Error:", error);
+            } finally {
+                setUILoading(false);
+            }
+        }
+
+        runScanBtn.addEventListener('click', runAssessment);
+    </script>
+</body>
+</html>

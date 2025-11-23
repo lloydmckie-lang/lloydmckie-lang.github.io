@@ -71,6 +71,10 @@
 1. [Level Up your DnD with AI Agents](https://www.meetup.com/en-au/perthazug/events/311912877/?eventOrigin=group_upcoming_events)
     1. <a href="stats/index.html" >Character Sheet</a>
 
-## Books
+## Book recommendations
 
 1. [From No to How](https://lloyd150337.substack.com/p/from-no-to-how)
+
+## Tools
+
+1. [GitHub Maturity Assessment](tools/github-maturity-assessment.html)
