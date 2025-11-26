@@ -70,7 +70,7 @@
 
 1. [Level Up your DnD with AI Agents](https://www.meetup.com/en-au/perthazug/events/311912877/?eventOrigin=group_upcoming_events)
     1. <a href="stats/index.html" >Character Sheet</a>
-    2. [Meetup details and links](docs/events/azure-meetup-2025.md)
+    2. [Meetup details and links](events/azure-meetup-2025.md)
     3. [Perth Azure Group Presentations](https://github.com/perthazug/Presentations)
 
 ## Book recommendations
