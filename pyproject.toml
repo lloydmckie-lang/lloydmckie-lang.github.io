@@ -1,0 +1,10 @@
+[project]
+name = "GitHub-Pages-by-Lloyd"
+version = "0.1.0"
+description = "GitHub Pages of blog posts, tools and techniques"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.0",
+]

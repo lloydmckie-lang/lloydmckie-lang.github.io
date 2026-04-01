@@ -10,3 +10,8 @@ test:
 	cd ui && react-scripts test
 eject:
 	cd ui && react-scripts eject
+
+add-uv:
+	uv init
+	rm main.py
+	
